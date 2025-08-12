@@ -1,0 +1,29 @@
+package com.albierygs.hrvacancies.modules.company.controllers;
+
+import com.albierygs.hrvacancies.modules.company.entities.CompanyEntity;
+import com.albierygs.hrvacancies.modules.company.useCases.CreateCompanyUseCase;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/company")
+public class CompanyController {
+
+    @Autowired
+    private CreateCompanyUseCase createCompanyUseCase;
+
+    @PostMapping("/create")
+    public ResponseEntity<Object> create(@Valid @RequestBody CompanyEntity companyEntity) {
+        try {
+            var company = this.createCompanyUseCase.execute(companyEntity);
+            return ResponseEntity.ok().body(company);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+}
