@@ -23,3 +23,14 @@ jobs:
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/gestao_vagas .
       - name: Publish image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/gestao_vagas
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Pull image docker hub
+        run: docker pull albierygs/gestao_vagas:latest
+      - name: Remove container
+        run: docker rm -f gestao-vagas
+      - name: Run docker container
+        run: docker run -d -p 8080:8080 -e DATABASE_URL=${{ secrets.DATABASE_URL }} -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} -e DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} --name gestao-vagas albierygs/gestao_vagas
